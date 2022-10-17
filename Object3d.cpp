@@ -33,13 +33,13 @@ D3D12_INDEX_BUFFER_VIEW Object3d::ibView{};
 Object3d::VertexPosNormalUv Object3d::vertices[vertexCount];
 unsigned short Object3d::indices[indexCount];
 
-void Object3d::StaticInitialize(ID3D12Device * device, int window_width, int window_height)
+void Object3d::StaticInitialize(ID3D12Device* device, int window_width, int window_height)
 {
 	// nullptrチェック
 	assert(device);
 
 	Object3d::device = device;
-		
+
 	// デスクリプタヒープの初期化
 	InitializeDescriptorHeap();
 
@@ -57,7 +57,7 @@ void Object3d::StaticInitialize(ID3D12Device * device, int window_width, int win
 
 }
 
-void Object3d::PreDraw(ID3D12GraphicsCommandList * cmdList)
+void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
 	// PreDrawとPostDrawがペアで呼ばれていなければエラー
 	assert(Object3d::cmdList == nullptr);
@@ -79,7 +79,7 @@ void Object3d::PostDraw()
 	Object3d::cmdList = nullptr;
 }
 
-Object3d * Object3d::Create()
+Object3d* Object3d::Create()
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Object3d* object3d = new Object3d();
@@ -142,7 +142,7 @@ void Object3d::CameraMoveEyeVector(XMFLOAT3 move)
 void Object3d::InitializeDescriptorHeap()
 {
 	HRESULT result = S_FALSE;
-	
+
 	// デスクリプタヒープを生成	
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -161,10 +161,7 @@ void Object3d::InitializeDescriptorHeap()
 void Object3d::InitializeCamera(int window_width, int window_height)
 {
 	// ビュー行列の生成
-	matView = XMMatrixLookAtLH(
-		XMLoadFloat3(&eye),
-		XMLoadFloat3(&target),
-		XMLoadFloat3(&up));
+	UpdateViewMatrix();
 
 	// 平行投影による射影行列の生成
 	//constMap->mat = XMMatrixOrthographicOffCenterLH(
@@ -333,7 +330,7 @@ void Object3d::LoadTexture()
 	ScratchImage scratchImg{};
 
 	// WICテクスチャのロード
-	result = LoadFromWICFile( L"Resources/tex1.png", WIC_FLAGS_NONE, &metadata, scratchImg);
+	result = LoadFromWICFile(L"Resources/tex1.png", WIC_FLAGS_NONE, &metadata, scratchImg);
 	assert(SUCCEEDED(result));
 
 	ScratchImage mipChain{};
@@ -421,126 +418,6 @@ void Object3d::CreateModel()
 	//メンバ変数にコピー
 	std::copy(std::begin(indicesSquare), std::end(indicesSquare), indices);
 
-	//std::vector<VertexPosNormalUv> realVertices;
-
-	//// 頂点座標の計算（重複あり）
-	//{
-	//	realVertices.resize((division + 1) * 2);
-	//	int index = 0;
-	//	float zValue;
-
-	//	// 底面
-	//	zValue = prizmHeight / 2.0f;
-	//	for (int i = 0; i < division; i++)
-	//	{
-	//		XMFLOAT3 vertex;
-	//		vertex.x = radius * sinf(XM_2PI / division * i);
-	//		vertex.y = radius * cosf(XM_2PI / division * i);
-	//		vertex.z = zValue;
-	//		realVertices[index++].pos = vertex;
-	//	}
-	//	realVertices[index++].pos = XMFLOAT3(0, 0, zValue);	// 底面の中心点
-	//	// 天面
-	//	zValue = -prizmHeight / 2.0f;
-	//	for (int i = 0; i < division; i++)
-	//	{
-	//		XMFLOAT3 vertex;
-	//		vertex.x = radius * sinf(XM_2PI / division * i);
-	//		vertex.y = radius * cosf(XM_2PI / division * i);
-	//		vertex.z = zValue;
-	//		realVertices[index++].pos = vertex;
-	//	}
-	//	realVertices[index++].pos = XMFLOAT3(0, 0, zValue);	// 天面の中心点
-	//}
-
-	//// 頂点座標の計算（重複なし）
-	//{
-	//	int index = 0;
-	//	// 底面
-	//	for (int i = 0; i < division; i++)
-	//	{
-	//		unsigned short index0 = i + 1;
-	//		unsigned short index1 = i;
-	//		unsigned short index2 = division;
-
-	//		vertices[index++] = realVertices[index0];
-	//		vertices[index++] = realVertices[index1];
-	//		vertices[index++] = realVertices[index2]; // 底面の中心点
-	//	}
-	//	// 底面の最後の三角形の1番目のインデックスを0に書き換え
-	//	vertices[index - 3] = realVertices[0];
-
-	//	int topStart = division + 1;
-	//	// 天面
-	//	for (int i = 0; i < division; i++)
-	//	{
-	//		unsigned short index0 = topStart + i;
-	//		unsigned short index1 = topStart + i + 1;
-	//		unsigned short index2 = topStart + division;
-
-	//		vertices[index++] = realVertices[index0];
-	//		vertices[index++] = realVertices[index1];
-	//		vertices[index++] = realVertices[index2]; // 天面の中心点
-	//	}
-	//	// 天面の最後の三角形の1番目のインデックスを0に書き換え
-	//	vertices[index - 2] = realVertices[topStart];
-
-	//	// 側面
-	//	for (int i = 0; i < division; i++)
-	//	{
-	//		unsigned short index0 = i + 1;
-	//		unsigned short index1 = topStart + i + 1;
-	//		unsigned short index2 = i;
-	//		unsigned short index3 = topStart + i;
-
-	//		if (i == division - 1)
-	//		{
-	//			index0 = 0;
-	//			index1 = topStart;
-	//		}
-
-	//		vertices[index++] = realVertices[index0];
-	//		vertices[index++] = realVertices[index1];
-	//		vertices[index++] = realVertices[index2];
-
-	//		vertices[index++] = realVertices[index2];
-	//		vertices[index++] = realVertices[index1];
-	//		vertices[index++] = realVertices[index3];
-	//	}
-	//}
-
-	//// 頂点インデックスの設定
-	//{
-	//	for (int i = 0; i < _countof(indices); i++)
-	//	{
-	//		indices[i] = i;
-	//	}
-	//}
-
-	//// 法線方向の計算
-	//for (int i = 0; i < _countof(indices) / 3; i++)
-	//{// 三角形１つごとに計算していく
-	//	// 三角形のインデックスを取得
-	//	unsigned short index0 = indices[i * 3 + 0];
-	//	unsigned short index1 = indices[i * 3 + 1];
-	//	unsigned short index2 = indices[i * 3 + 2];
-	//	// 三角形を構成する頂点座標をベクトルに代入
-	//	XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
-	//	XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
-	//	XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
-	//	// p0→p1ベクトル、p0→p2ベクトルを計算
-	//	XMVECTOR v1 = XMVectorSubtract(p1, p0);
-	//	XMVECTOR v2 = XMVectorSubtract(p2, p0);
-	//	// 外積は両方から垂直なベクトル
-	//	XMVECTOR normal = XMVector3Cross(v1, v2);
-	//	// 正規化（長さを1にする)
-	//	normal = XMVector3Normalize(normal);
-	//	// 求めた法線を頂点データに代入
-	//	XMStoreFloat3(&vertices[index0].normal, normal);
-	//	XMStoreFloat3(&vertices[index1].normal, normal);
-	//	XMStoreFloat3(&vertices[index2].normal, normal);
-	//}
-
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices));
 
 	// ヒーププロパティ
@@ -599,7 +476,48 @@ void Object3d::CreateModel()
 void Object3d::UpdateViewMatrix()
 {
 	// ビュー行列の更新
-	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	XMVECTOR eyePosition = XMLoadFloat3(&eye);			//視点座標
+	XMVECTOR targetPosition = XMLoadFloat3(&target);	//注視点座標
+	XMVECTOR upVector = XMLoadFloat3(&up);				//仮の上方向
+
+	XMVECTOR cameraAxisZ = XMVectorSubtract(targetPosition, eyePosition);	//引き算
+
+	assert(!XMVector3Equal(cameraAxisZ, XMVectorZero()));	//0じゃないか
+	assert(!XMVector3IsInfinite(cameraAxisZ));				//無限じゃないか
+	assert(!XMVector3Equal(upVector, XMVectorZero()));		//0じゃないか
+	assert(!XMVector3IsInfinite(upVector));					//無限じゃないか
+
+	cameraAxisZ = XMVector3Normalize(cameraAxisZ);	//正規化
+
+	XMVECTOR cameraAxisX;
+	cameraAxisX = XMVector3Cross(upVector, cameraAxisZ);	//外積使ってX軸求める
+
+	cameraAxisX = XMVector3Normalize(cameraAxisX);	//正規化
+
+	XMVECTOR cameraAxisY;
+	cameraAxisY = XMVector3Cross(cameraAxisZ, cameraAxisX);	//外積使ってY軸求める
+
+	XMMATRIX matCameraRot;	//カメラ回転行列
+	//カメラ座標系→ワールド座標系の変換行列
+	matCameraRot.r[0] = cameraAxisX;
+	matCameraRot.r[1] = cameraAxisY;
+	matCameraRot.r[2] = cameraAxisZ;
+	matCameraRot.r[3] = XMVectorSet(0,0,0,1);
+
+	//逆行列求める
+	matView = XMMatrixTranspose(matCameraRot);
+
+	//視点座標に-1をかけた座標
+	XMVECTOR reverseEyePosition = XMVectorNegate(eyePosition);	//反転
+	//カメラの位置からワールド原点へのベクトル
+	XMVECTOR tX = XMVector3Dot(cameraAxisX, reverseEyePosition);	//X成分
+	XMVECTOR tY = XMVector3Dot(cameraAxisY, reverseEyePosition);	//Y成分
+	XMVECTOR tZ = XMVector3Dot(cameraAxisZ, reverseEyePosition);	//Z成分
+	//1つのベクトルにまとめる
+	XMVECTOR translation = XMVectorSet(tX.m128_f32[0], tY.m128_f32[1], tZ.m128_f32[2], 1.0f);
+
+	//ビュー行列に平行移動成分を設定
+	matView.r[3] = translation;
 }
 
 bool Object3d::Initialize()
@@ -663,7 +581,7 @@ void Object3d::Draw()
 	// nullptrチェック
 	assert(device);
 	assert(Object3d::cmdList);
-		
+
 	// 頂点バッファの設定
 	cmdList->IASetVertexBuffers(0, 1, &vbView);
 	// インデックスバッファの設定

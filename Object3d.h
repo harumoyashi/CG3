@@ -205,7 +205,6 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position">座標</param>
 	void SetPosition(const XMFLOAT3& position) { this->position = position; }
-
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 	// 色
