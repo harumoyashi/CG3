@@ -212,7 +212,7 @@ public: // メンバ関数
 	void SetPosition(const XMFLOAT3& position) { this->position = position; }
 
 	/// <summary>
-	/// ビルボードの種類の設定
+	/// 現在のビルボードの種類取得
 	/// </summary>
 	/// <param name="position">座標</param>
 	const bool GetBillboard() const { return isYBillboard; }

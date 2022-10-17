@@ -82,6 +82,7 @@ void GameScene::Update()
 		}
 	}
 
+	//SPACEキーでビルボードの種類切り替え
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		for (size_t i = 0; i < maxObj; i++)
