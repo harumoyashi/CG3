@@ -198,10 +198,10 @@ private:// 静的メンバ関数
 	/// <returns>成否</returns>
 	static void InitializeGraphicsPipeline();
 
-	/// <summary>
+	/*/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	static void LoadTexture();
+	static void LoadTexture();*/
 
 	/// <summary>
 	/// テクスチャ読み込み
