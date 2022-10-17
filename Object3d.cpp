@@ -279,6 +279,7 @@ void Object3d::InitializeGraphicsPipeline()
 
 	// ブレンドステートの設定
 	gpipeline.BlendState.RenderTarget[0] = blenddesc;
+	gpipeline.BlendState.AlphaToCoverageEnable = true;	//透過ON
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -333,7 +334,7 @@ void Object3d::LoadTexture()
 	ScratchImage scratchImg{};
 
 	// WICテクスチャのロード
-	result = LoadFromWICFile(L"Resources/tex1.png", WIC_FLAGS_NONE, &metadata, scratchImg);
+	result = LoadFromWICFile(L"Resources/kusa.png", WIC_FLAGS_NONE, &metadata, scratchImg);
 	assert(SUCCEEDED(result));
 
 	ScratchImage mipChain{};
@@ -521,6 +522,31 @@ void Object3d::UpdateViewMatrix()
 
 	//ビュー行列に平行移動成分を設定
 	matView.r[3] = translation;
+
+#pragma region 全方向ビルボード行列の計算
+	//ビルボード行列
+	matBillboard.r[0] = cameraAxisX;
+	matBillboard.r[1] = cameraAxisY;
+	matBillboard.r[2] = cameraAxisZ;
+	matBillboard.r[3] = XMVectorSet(0, 0, 0, 1);
+#pragma endregion
+#pragma region 全方向ビルボード行列の計算
+	//カメラX軸、Y軸、Z軸
+	XMVECTOR ybillCameraAxisX, ybillCameraAxisY, ybillCameraAxisZ;
+
+	//X軸は共通
+	ybillCameraAxisX = cameraAxisX;
+	//Y軸はワールド座標系のY軸
+	ybillCameraAxisY = XMVector3Normalize(upVector);
+	//Z軸はX軸→Y軸の外積で求まる
+	ybillCameraAxisZ = XMVector3Cross(ybillCameraAxisX, ybillCameraAxisY);
+
+	//Y軸回りビルボード行列
+	matBillboardY.r[0] = ybillCameraAxisX;
+	matBillboardY.r[1] = ybillCameraAxisY;
+	matBillboardY.r[2] = ybillCameraAxisZ;
+	matBillboardY.r[3] = XMVectorSet(0, 0, 0, 1);
+#pragma endregion
 }
 
 bool Object3d::Initialize()
@@ -554,16 +580,25 @@ void Object3d::Update()
 	// スケール、回転、平行移動行列の計算
 	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
-	matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
-	matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));	//ビルボードの時はローカル回転をZ軸のみに限定
 	matTrans = XMMatrixTranslation(position.x, position.y, position.z);
 
 	// ワールド行列の合成
 	matWorld = XMMatrixIdentity(); // 変形をリセット
-	matWorld *= matScale; // ワールド行列にスケーリングを反映
-	matWorld *= matRot; // ワールド行列に回転を反映
-	matWorld *= matTrans; // ワールド行列に平行移動を反映
+
+	matWorld *= matScale;	//ワールド行列にスケーリングを反映
+	matWorld *= matRot;		//ワールド行列に回転を反映
+
+	if (isYBillboard)
+	{
+		matWorld *= matBillboardY;	//Y軸ビルボード行列をかける
+	}
+	else
+	{
+		matWorld *= matBillboard;	//ビルボード行列をかける
+	}
+
+	matWorld *= matTrans;	//ワールド行列に平行移動を反映
 
 	// 親オブジェクトがあれば
 	if (parent != nullptr) {

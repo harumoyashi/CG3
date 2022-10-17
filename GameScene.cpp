@@ -1,5 +1,6 @@
 ﻿#include "GameScene.h"
 #include <cassert>
+#include <time.h>
 
 using namespace DirectX;
 
@@ -10,7 +11,10 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	delete spriteBG;
-	delete object3d;
+	for (size_t i = 0; i < maxObj; i++)
+	{
+		delete object3d[i];
+	}
 	delete sprite1;
 	delete sprite2;
 }
@@ -34,9 +38,19 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	// 背景スプライト生成
 	spriteBG = Sprite::Create(1, { 0.0f,0.0f });
+
+	//ランダム数生成用
+	srand(time(nullptr));
+
 	// 3Dオブジェクト生成
-	object3d = Object3d::Create();
-	object3d->Update();
+	for (size_t i = 0; i < maxObj; i++)
+	{
+		object3d[i] = Object3d::Create();
+
+		//出現範囲-20~20のランダムで決める
+		object3d[i]->SetPosition({ static_cast<float>(rand() % 40 - 20),0,static_cast<float>(rand() % 40 - 20) });
+		object3d[i]->Update();
+	}
 
 	//前景スプライト生成
 	//テクスチャ2番に読み込み
@@ -52,17 +66,35 @@ void GameScene::Update()
 	// オブジェクト移動
 	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
 	{
-		// 現在の座標を取得
-		XMFLOAT3 position = object3d->GetPosition();
+		for (size_t i = 0; i < maxObj; i++)
+		{
+			// 現在の座標を取得
+			XMFLOAT3 position = object3d[i]->GetPosition();
 
-		// 移動後の座標を計算
-		if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
-		else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
-		if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
-		else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
+			// 移動後の座標を計算
+			if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
+			else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
+			if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
+			else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
 
-		// 座標の変更を反映
-		object3d->SetPosition(position);
+			// 座標の変更を反映
+			object3d[i]->SetPosition(position);
+		}
+	}
+
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		for (size_t i = 0; i < maxObj; i++)
+		{
+			if (object3d[i]->GetBillboard())
+			{
+				object3d[i]->SetBillboard(false);
+			}
+			else
+			{
+				object3d[i]->SetBillboard(true);
+			}
+		}
 	}
 
 	// カメラ移動
@@ -74,7 +106,10 @@ void GameScene::Update()
 		else if (input->PushKey(DIK_A)) { Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f }); }
 	}
 
-	object3d->Update();
+	for (size_t i = 0; i < maxObj; i++)
+	{
+		object3d[i]->Update();
+	}
 
 	//スプライト移動
 	if (input->PushKey(DIK_SPACE))
@@ -97,7 +132,7 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
 	// 背景スプライト描画
-	spriteBG->Draw();
+	//spriteBG->Draw();
 
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
@@ -114,7 +149,10 @@ void GameScene::Draw()
 	Object3d::PreDraw(cmdList);
 
 	// 3Dオブクジェクトの描画
-	object3d->Draw();
+	for (size_t i = 0; i < maxObj; i++)
+	{
+		object3d[i]->Draw();
+	}
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる

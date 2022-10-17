@@ -210,6 +210,19 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position">座標</param>
 	void SetPosition(const XMFLOAT3& position) { this->position = position; }
+
+	/// <summary>
+	/// ビルボードの種類の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	const bool GetBillboard() const { return isYBillboard; }
+
+	/// <summary>
+	/// ビルボードの種類の設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetBillboard(const bool isYBillboard) { this->isYBillboard = isYBillboard; }
+
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 	// 色
@@ -224,5 +237,7 @@ private: // メンバ変数
 	XMMATRIX matWorld;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
+
+	bool isYBillboard = true;	//true:Y軸ビルボード,false:全方向ビルボード
 };
 
