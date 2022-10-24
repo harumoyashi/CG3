@@ -172,6 +172,7 @@ void GameScene::Draw()
 	/// </summary>
 	//sprite1->Draw();
 	//sprite2->Draw();
+	debugText.Print("SPACE Billboard Change", 0, 0, 3);
 
 	// デバッグテキストの描画
 	debugText.DrawAll(cmdList);
