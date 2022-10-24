@@ -4,6 +4,11 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+#include <fstream>
+#include <sstream>
+#include <string>
+using namespace std;
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 

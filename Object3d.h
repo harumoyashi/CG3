@@ -5,11 +5,6 @@
 #include <DirectXMath.h>
 #include <d3dx12.h>
 
-#include <fstream>
-#include <sstream>
-#include <string>
-using namespace std;
-
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
