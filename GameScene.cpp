@@ -11,10 +11,11 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	delete spriteBG;
-	for (size_t i = 0; i < maxObj; i++)
+	delete object3d;
+	/*for (size_t i = 0; i < maxObj; i++)
 	{
 		delete object3d[i];
-	}
+	}*/
 	delete sprite1;
 	delete sprite2;
 }
@@ -43,14 +44,16 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	srand(time(nullptr));
 
 	// 3Dオブジェクト生成
-	for (size_t i = 0; i < maxObj; i++)
-	{
-		object3d[i] = Object3d::Create();
+	object3d = Object3d::Create();
 
-		//出現範囲-20~20のランダムで決める
-		object3d[i]->SetPosition({ static_cast<float>(rand() % 40 - 20),0,static_cast<float>(rand() % 40 - 20) });
-		object3d[i]->Update();
-	}
+	//for (size_t i = 0; i < maxObj; i++)
+	//{
+	//	object3d[i] = Object3d::Create();
+
+	//	//出現範囲-20~20のランダムで決める
+	//	object3d[i]->SetPosition({ static_cast<float>(rand() % 40 - 20),0,static_cast<float>(rand() % 40 - 20) });
+	//	object3d[i]->Update();
+	//}
 
 	//前景スプライト生成
 	//テクスチャ2番に読み込み
@@ -66,24 +69,36 @@ void GameScene::Update()
 	// オブジェクト移動
 	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
 	{
-		for (size_t i = 0; i < maxObj; i++)
-		{
-			// 現在の座標を取得
-			XMFLOAT3 position = object3d[i]->GetPosition();
+		// 現在の座標を取得
+		XMFLOAT3 position = object3d->GetPosition();
 
-			// 移動後の座標を計算
-			if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
-			else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
-			if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
-			else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
+		// 移動後の座標を計算
+		if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
+		else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
+		if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
+		else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
 
-			// 座標の変更を反映
-			object3d[i]->SetPosition(position);
-		}
+		// 座標の変更を反映
+		object3d->SetPosition(position);
+
+		//for (size_t i = 0; i < maxObj; i++)
+		//{
+		//	// 現在の座標を取得
+		//	XMFLOAT3 position = object3d[i]->GetPosition();
+
+		//	// 移動後の座標を計算
+		//	if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
+		//	else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
+		//	if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
+		//	else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
+
+		//	// 座標の変更を反映
+		//	object3d[i]->SetPosition(position);
+		//}
 	}
 
 	//SPACEキーでビルボードの種類切り替え
-	if (input->TriggerKey(DIK_SPACE))
+	/*if (input->TriggerKey(DIK_SPACE))
 	{
 		for (size_t i = 0; i < maxObj; i++)
 		{
@@ -96,7 +111,7 @@ void GameScene::Update()
 				object3d[i]->SetBillboard(true);
 			}
 		}
-	}
+	}*/
 
 	// カメラ移動
 	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
@@ -107,10 +122,11 @@ void GameScene::Update()
 		else if (input->PushKey(DIK_A)) { Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f }); }
 	}
 
-	for (size_t i = 0; i < maxObj; i++)
+	object3d->Update();
+	/*for (size_t i = 0; i < maxObj; i++)
 	{
 		object3d[i]->Update();
-	}
+	}*/
 
 	//スプライト移動
 	if (input->PushKey(DIK_SPACE))
@@ -150,10 +166,11 @@ void GameScene::Draw()
 	Object3d::PreDraw(cmdList);
 
 	// 3Dオブクジェクトの描画
-	for (size_t i = 0; i < maxObj; i++)
+	object3d->Draw();
+	/*for (size_t i = 0; i < maxObj; i++)
 	{
 		object3d[i]->Draw();
-	}
+	}*/
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる

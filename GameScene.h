@@ -61,8 +61,9 @@ private: // メンバ変数
 	/// </summary>
 	Sprite* spriteBG = nullptr;
 
-	static const int maxObj = 50;
-	Object3d* object3d[maxObj] = {};
+	Object3d* object3d = {};
+	/*static const int maxObj = 50;
+	Object3d* object3d[maxObj] = {};*/
 
 	Sprite* sprite1 = nullptr;
 	Sprite* sprite2 = nullptr;
