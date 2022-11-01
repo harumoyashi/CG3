@@ -276,6 +276,11 @@ void ParticleManager::InitializeGraphicsPipeline()
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
+		{	//色
+			"COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
 	};
 
 	// グラフィックスパイプラインの流れを設定
@@ -583,6 +588,8 @@ void ParticleManager::Update()
 		//一旦可変してく値をスケールに入れる
 		it->scale = (it->startScale - it->endScale) * f;	//進行度に合わせて右辺の値が変わってく
 		it->scale -= it->startScale;	//元の大きさ基準で反映する
+
+		it->color.w = 1.0f - f;
 	}
 
 	//頂点バッファへデータ転送
@@ -597,6 +604,8 @@ void ParticleManager::Update()
 			vertMap->pos = it->position;
 			//スケール
 			vertMap->scale = it->scale;
+			//色
+			vertMap->color = it->color;
 			//次の頂点へ
 			vertMap++;
 		}
@@ -642,7 +651,7 @@ void ParticleManager::Draw()
 	cmdList->DrawInstanced((UINT)std::distance(particles.begin(), particles.end()), 1, 0, 0);
 }
 
-void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale)
+void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale,XMFLOAT4 color)
 {
 	//リストに要素を追加
 	particles.emplace_front();
@@ -656,4 +665,5 @@ void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel,
 	p.scale = startScale;
 	p.startScale = startScale;
 	p.endScale = endScale;
+	p.color = color;
 }

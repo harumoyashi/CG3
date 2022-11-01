@@ -27,6 +27,7 @@ public: // サブクラス
 	{
 		XMFLOAT3 pos;	//xyz座標
 		float scale;	//大きさ
+		XMFLOAT4 color;	//RGBA
 	};
 
 	// 定数バッファ用データ構造体
@@ -55,6 +56,8 @@ public: // サブクラス
 		float scale = 1.0f;			//スケール
 		float startScale = 1.0f;	//初期値
 		float endScale = 0.0f;		//最終値
+		//色(RGBA)
+		XMFLOAT4 color = {};
 	};
 
 private: // 定数
@@ -223,7 +226,7 @@ public: // メンバ関数
 	/// <param name="accel">加速度</param>
 	/// <param name="startScale">開始時スケール</param>
 	/// <param name="endScale">終了時スケール</param>
-	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel,float startScale,float endScale);
+	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 color = { 1,1,1,1.0f });
 
 	/// <summary>
 	/// 現在のビルボードの種類取得
