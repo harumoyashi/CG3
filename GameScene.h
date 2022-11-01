@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include "Input.h"
 #include "Sprite.h"
-#include "Particle.h"
+#include "ParticleManager.h"
 #include "DebugText.h"
 
 /// <summary>
