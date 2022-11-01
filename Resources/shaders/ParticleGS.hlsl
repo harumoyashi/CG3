@@ -6,10 +6,10 @@ static const uint vnum = 4;
 //センターからのオフセット
 static const float4 offset_array[vnum] =
 {
-    float4(-1.5f, -1.5f, 0, 0), //左下
-    float4(-1.5f, +1.5f, 0, 0), //左上
-    float4(+1.5f, -1.5f, 0, 0), //右下
-    float4(+1.5f, +1.5f, 0, 0), //右上
+    float4(-0.5f, -0.5f, 0, 0), //左下
+    float4(-0.5f, +0.5f, 0, 0), //左上
+    float4(+0.5f, -0.5f, 0, 0), //右下
+    float4(+0.5f, +0.5f, 0, 0), //右上
 };
 
 //左下が0,0　右下が1,1
@@ -31,8 +31,10 @@ void main(
    
     for (uint i = 0; i < vnum; i++)
     {
-        //ワールド座標ベースでずらす
-        float4 offset = mul(matBillboard, offset_array[i]);
+        //中心からのオフセットをスケーリング
+        float4 offset = offset_array[i] * input[0].scale;
+        //ビルボード回転
+        offset = mul(matBillboard, offset);
         //オフセット分ずらす(ワールド座標)
         element.svpos = input[0].pos + offset;
         

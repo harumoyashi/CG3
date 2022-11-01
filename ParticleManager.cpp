@@ -266,8 +266,13 @@ void ParticleManager::InitializeGraphicsPipeline()
 
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{ // xy座標(1行で書いたほうが見やすい)
+		{	//xyz座標(1行で書いたほうが見やすい)
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
+		{	//スケール
+			"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
@@ -571,6 +576,13 @@ void ParticleManager::Update()
 		it->velocity = it->velocity + it->accel;
 		//速度による移動
 		it->position = it->position + it->velocity;
+
+		//進行度を0~1の範囲に換算
+		float f = (float)it->frame / it->num_frame;
+		//スケールの線形補間
+		//一旦可変してく値をスケールに入れる
+		it->scale = (it->startScale - it->endScale) * f;	//進行度に合わせて右辺の値が変わってく
+		it->scale -= it->startScale;	//元の大きさ基準で反映する
 	}
 
 	//頂点バッファへデータ転送
@@ -583,6 +595,8 @@ void ParticleManager::Update()
 		{
 			//座標
 			vertMap->pos = it->position;
+			//スケール
+			vertMap->scale = it->scale;
 			//次の頂点へ
 			vertMap++;
 		}
@@ -625,10 +639,10 @@ void ParticleManager::Draw()
 	// シェーダリソースビューをセット
 	cmdList->SetGraphicsRootDescriptorTable(1, gpuDescHandleSRV);
 	// 描画コマンド
-	cmdList->DrawInstanced((UINT)std::distance(particles.begin(),particles.end()), 1, 0, 0);
+	cmdList->DrawInstanced((UINT)std::distance(particles.begin(), particles.end()), 1, 0, 0);
 }
 
-void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel)
+void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale)
 {
 	//リストに要素を追加
 	particles.emplace_front();
@@ -639,4 +653,7 @@ void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel)
 	p.velocity = velo;
 	p.accel = accel;
 	p.num_frame = life;
+	p.scale = startScale;
+	p.startScale = startScale;
+	p.endScale = endScale;
 }

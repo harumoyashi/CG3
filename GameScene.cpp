@@ -46,31 +46,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	// 3Dオブジェクト生成
 	particle = ParticleManager::Create();
 
-	for (size_t i = 0; i < 100; i++)
-	{
-		//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-		const float md_pos = 10.0f;
-		XMFLOAT3 pos{};
-		pos.x = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-		pos.y = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-		pos.z = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-
-		//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-		const float md_vel = 10.0f;
-		XMFLOAT3 vel{};
-		vel.x = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-		vel.y = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-		vel.z = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-
-		//重力に見立ててYのみ[-0.001f,0]ランダムに分布
-		XMFLOAT3 acc{};
-		const float rnd_acc = 0.001f;
-		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
-
-		//追加
-		particle->Add(60, pos, vel, acc);
-	}
-
 	//前景スプライト生成
 	//テクスチャ2番に読み込み
 	Sprite::LoadTexture(2, L"Resources/texture.png");
@@ -83,7 +58,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 void GameScene::Update()
 {
 	//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-	const float md_pos = 10.0f;
+	const float md_pos = 30.0f;
 	XMFLOAT3 pos{};
 	pos.x = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
 	pos.y = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
@@ -92,16 +67,16 @@ void GameScene::Update()
 	//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
 	const float md_vel = 10.0f;
 	XMFLOAT3 vel{};
-	vel.x = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-	vel.y = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
-	vel.z = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
+	vel.x = /*(float)rand() / RAND_MAX * md_vel - md_vel / 2.0f*/0.0f;
+	vel.y = /*(float)rand() / RAND_MAX * md_vel - md_vel / 2.0f*/0.0f;
+	vel.z = /*(float)rand() / RAND_MAX * md_vel - md_vel / 2.0f*/0.0f;
 
 	//重力に見立ててYのみ[-0.001f,0]ランダムに分布
 	XMFLOAT3 acc{};
 	const float rnd_acc = 0.001f;
 	acc.y = -(float)rand() / RAND_MAX * rnd_acc;
 	//追加
-	particle->Add(60, pos, vel, acc);
+	particle->Add(60, pos, vel, acc, 0.0f, 3.0f);
 
 	// オブジェクト移動
 	//if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))

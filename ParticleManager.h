@@ -25,14 +25,15 @@ public: // サブクラス
 	// 頂点データ構造体
 	struct VertexPos
 	{
-		XMFLOAT3 pos; // xyz座標
+		XMFLOAT3 pos;	//xyz座標
+		float scale;	//大きさ
 	};
 
 	// 定数バッファ用データ構造体
 	struct ConstBufferData
 	{
-		XMMATRIX mat;	// ３Ｄ変換行列
-		XMMATRIX matBillboard;//ビルボード行列
+		XMMATRIX mat;			//3D変換行列
+		XMMATRIX matBillboard;	//ビルボード行列
 	};
 
 	//パーティクル1粒
@@ -50,6 +51,10 @@ public: // サブクラス
 		int frame = 0;
 		//終了フレーム
 		int num_frame = 0;
+		// ローカルスケール
+		float scale = 1.0f;			//スケール
+		float startScale = 1.0f;	//初期値
+		float endScale = 0.0f;		//最終値
 	};
 
 private: // 定数
@@ -216,7 +221,9 @@ public: // メンバ関数
 	/// <param name="pos">初期座標</param>
 	/// <param name="velo">速度</param>
 	/// <param name="accel">加速度</param>
-	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel);
+	/// <param name="startScale">開始時スケール</param>
+	/// <param name="endScale">終了時スケール</param>
+	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel,float startScale,float endScale);
 
 	/// <summary>
 	/// 現在のビルボードの種類取得
@@ -232,9 +239,6 @@ public: // メンバ関数
 
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
-
-	// ローカルスケール
-	XMFLOAT3 scale = { 1,1,1 };
 
 	bool isYBillboard = true;	//true:Y軸ビルボード,false:全方向ビルボード
 
