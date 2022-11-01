@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include "Input.h"
 #include "Sprite.h"
-#include "Object3d.h"
+#include "Particle.h"
 #include "DebugText.h"
 
 /// <summary>
@@ -61,7 +61,7 @@ private: // メンバ変数
 	/// </summary>
 	Sprite* spriteBG = nullptr;
 
-	Object3d* object3d = {};
+	ParticleManager* particle = {};
 	/*static const int maxObj = 50;
 	Object3d* object3d[maxObj] = {};*/
 
