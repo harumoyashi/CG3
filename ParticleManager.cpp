@@ -272,7 +272,7 @@ void ParticleManager::InitializeGraphicsPipeline()
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{	//スケール
-			"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT, 0,
+			"TEXCOORD",0,DXGI_FORMAT_R32_FLOAT, 0,
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
@@ -582,14 +582,29 @@ void ParticleManager::Update()
 		//速度による移動
 		it->position = it->position + it->velocity;
 
+		//資料の通りに変えてみたらスケール正常に変わりました～！
+		//こちらのタイプミスだったかもしれません
 		//進行度を0~1の範囲に換算
-		float f = (float)it->frame / it->num_frame;
+		float f = (float)it->num_frame / it->frame;
 		//スケールの線形補間
-		//一旦可変してく値をスケールに入れる
-		it->scale = (it->startScale - it->endScale) * f;	//進行度に合わせて右辺の値が変わってく
-		it->scale -= it->startScale;	//元の大きさ基準で反映する
+		it->scale = (it->endScale - it->startScale) / f;
+		it->scale += it->startScale;
 
-		it->color.w = 1.0f - f;
+		//進行度を0~1の範囲に換算
+		float f1 = (float)it->frame / it->num_frame;
+
+		if (isDark)
+		{
+			it->color.x = f1 * it->originColor.x;
+			it->color.y = f1 * it->originColor.y;
+			it->color.z = f1 * it->originColor.z;
+		}
+		else
+		{
+			it->color.x *= (1.0f - f1);
+			it->color.y *= (1.0f - f1);
+			it->color.z *= (1.0f - f1);
+		}
 	}
 
 	//頂点バッファへデータ転送
@@ -651,7 +666,7 @@ void ParticleManager::Draw()
 	cmdList->DrawInstanced((UINT)std::distance(particles.begin(), particles.end()), 1, 0, 0);
 }
 
-void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale,XMFLOAT4 color)
+void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 color)
 {
 	//リストに要素を追加
 	particles.emplace_front();
@@ -666,4 +681,5 @@ void ParticleManager::Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel,
 	p.startScale = startScale;
 	p.endScale = endScale;
 	p.color = color;
+	p.originColor = color;
 }

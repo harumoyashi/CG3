@@ -76,7 +76,8 @@ void GameScene::Update()
 	const float rnd_acc = 0.001f;
 	acc.y = -(float)rand() / RAND_MAX * rnd_acc;
 	//追加
-	particle->Add(60, pos, vel, acc, 0.0f, 3.0f);
+	particle->Add(120, pos, vel, acc, 3.0f, 3.0f,{0,0.8f,0.9f,1.0f});
+	particle->SetIsDark(true);
 
 	// オブジェクト移動
 	//if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))

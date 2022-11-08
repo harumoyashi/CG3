@@ -58,6 +58,7 @@ public: // サブクラス
 		float endScale = 0.0f;		//最終値
 		//色(RGBA)
 		XMFLOAT4 color = {};
+		XMFLOAT4 originColor = {};	//色の初期値
 	};
 
 private: // 定数
@@ -226,7 +227,8 @@ public: // メンバ関数
 	/// <param name="accel">加速度</param>
 	/// <param name="startScale">開始時スケール</param>
 	/// <param name="endScale">終了時スケール</param>
-	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 color = { 1,1,1,1.0f });
+	/// <param name="isDark">true:濃くなっていく,false:薄くなってく</param>
+	void Add(int life, XMFLOAT3 pos, XMFLOAT3 velo, XMFLOAT3 accel, float startScale, float endScale, XMFLOAT4 color = { 1,1,1,1 });
 
 	/// <summary>
 	/// 現在のビルボードの種類取得
@@ -240,10 +242,18 @@ public: // メンバ関数
 	/// <param name="position">座標</param>
 	void SetBillboard(const bool isYBillboard) { this->isYBillboard = isYBillboard; }
 
+	/// <summary>
+	/// 濃くなってくかの設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetIsDark(const bool isDark) { this->isDark = isDark; }
+
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuff; // 定数バッファ
 
 	bool isYBillboard = true;	//true:Y軸ビルボード,false:全方向ビルボード
+
+	bool isDark = false;	//true:濃くなっていく, false:薄くなってく
 
 	std::forward_list<Particle> particles;	//パーティクル配列
 };
