@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Sprite.h"
 #include "ParticleManager.h"
+#include "Object3d.h"
 #include "DebugText.h"
 
 /// <summary>
@@ -62,8 +63,9 @@ private: // メンバ変数
 	Sprite* spriteBG = nullptr;
 
 	ParticleManager* particle = {};
-	/*static const int maxObj = 50;
-	Object3d* object3d[maxObj] = {};*/
+
+	static const int maxObj = 50;
+	Object3d* object3d[maxObj] = {};
 
 	Sprite* sprite1 = nullptr;
 	Sprite* sprite2 = nullptr;
