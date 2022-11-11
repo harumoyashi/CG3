@@ -48,7 +48,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	//前景スプライト生成
 	//テクスチャ2番に読み込み
-	Sprite::LoadTexture(2, L"Resources/texture.png");
+	Sprite::LoadTexture(2, L"Resources/hamutaro.jpg");
 
 	//座標{0,0}に、テクスチャ2番のスプライトを生成
 	sprite1 = Sprite::Create(2, { 0,0 });
@@ -76,7 +76,7 @@ void GameScene::Update()
 	const float rnd_acc = 0.001f;
 	acc.y = -(float)rand() / RAND_MAX * rnd_acc;
 	//追加
-	particle->Add(120, pos, vel, acc, 3.0f, 3.0f,{0,0.8f,0.9f,1.0f});
+	particle->Add(120, pos, vel, acc, 0.0f, 3.0f,{0,0.8f,0.9f,1.0f});
 	particle->SetIsDark(true);
 
 	// オブジェクト移動
