@@ -637,7 +637,7 @@ void ParticleManager::Update()
 	}
 	else
 	{
-		constMap->matBillboard = matBillboard;		//ビルボード行列をかける
+		constMap->matBillboard = matBillboard;	//ビルボード行列をかける
 	}
 
 	constBuff->Unmap(0, nullptr);

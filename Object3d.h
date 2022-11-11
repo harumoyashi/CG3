@@ -68,7 +68,7 @@ public: // 静的メンバ関数
 	/// 3Dオブジェクト生成
 	/// </summary>
 	/// <returns></returns>
-	static Object3d* Create();
+	static Object3d* Create(const wchar_t* filename);
 
 	/// <summary>
 	/// 視点座標の取得
@@ -175,7 +175,7 @@ private:// 静的メンバ関数
 	/// <summary>
 	/// テクスチャ読み込み
 	/// </summary>
-	static void LoadTexture();
+	static void LoadTexture(const wchar_t*filename);
 
 	/// <summary>
 	/// モデル作成

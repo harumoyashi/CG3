@@ -64,7 +64,7 @@ private: // メンバ変数
 
 	ParticleManager* particle = {};
 
-	static const int maxObj = 50;
+	static const int maxObj = 2;
 	Object3d* object3d[maxObj] = {};
 
 	Sprite* sprite1 = nullptr;

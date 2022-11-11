@@ -16,8 +16,8 @@ GameScene::~GameScene()
 	{
 		delete object3d[i];
 	}
-	delete sprite1;
-	delete sprite2;
+	//delete sprite1;
+	//delete sprite2;
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -45,14 +45,23 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 	// 3Dオブジェクト生成
 	particle = ParticleManager::Create();
+	particle->SetBillboard(false);
 
 	// 3Dオブジェクト生成
 	for (size_t i = 0; i < maxObj; i++)
 	{
-		object3d[i] = Object3d::Create();
+		object3d[i] = Object3d::Create(L"Resources/hamutaro.jpg");
 
-		//出現範囲-20~20のランダムで決める
-		object3d[i]->SetPosition({ static_cast<float>(rand() % 40 - 20),0,static_cast<float>(rand() % 40 - 20) });
+		if (i == 0)
+		{
+			object3d[i]->SetPosition({ -10,0,0 });
+			object3d[i]->SetBillboard(true);
+		}
+		else if (i == 1)
+		{
+			object3d[i]->SetPosition({ 10,0,0 });
+			object3d[i]->SetBillboard(false);
+		}
 		object3d[i]->Update();
 	}
 
@@ -61,8 +70,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	Sprite::LoadTexture(2, L"Resources/hamutaro.jpg");
 
 	//座標{0,0}に、テクスチャ2番のスプライトを生成
-	sprite1 = Sprite::Create(2, { 0,0 });
-	sprite2 = Sprite::Create(2, { 500,500 }, { 1,0,0,1 }, { 0, 0 }, false, true);
+	//sprite1 = Sprite::Create(2, { 0,0 });
+	//sprite2 = Sprite::Create(2, { 500,500 }, { 1,0,0,1 }, { 0, 0 }, false, true);
 }
 
 void GameScene::Update()
@@ -120,57 +129,43 @@ void GameScene::Update()
 	//	//}
 	//}
 
-	//SPACEキーでビルボードの種類切り替え
-	if (input->TriggerKey(DIK_SPACE))
+	// カメラ移動
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
 	{
-
-		if (particle->GetBillboard())
-		{
-			particle->SetBillboard(false);
+		if (input->PushKey(DIK_W)) {
+			//ParticleManager::CameraMoveEyeVector({ 0.0f,+0.2f,0.0f });
+			Object3d::CameraMoveEyeVector({ 0.0f,+0.2f,0.0f });
 		}
-		else
-		{
-			particle->SetBillboard(true);
+		else if (input->PushKey(DIK_S)) {
+			//ParticleManager::CameraMoveEyeVector({ 0.0f,-0.2f,0.0f });
+			Object3d::CameraMoveEyeVector({ 0.0f,-0.2f,0.0f });
 		}
-
-		for (size_t i = 0; i < maxObj; i++)
-		{
-			if (object3d[i]->GetBillboard())
-			{
-				object3d[i]->SetBillboard(false);
-			}
-			else
-			{
-				object3d[i]->SetBillboard(true);
-			}
+		if (input->PushKey(DIK_D)) {
+			//ParticleManager::CameraMoveEyeVector({ +0.2f,0.0f,0.0f });
+			Object3d::CameraMoveEyeVector({ +0.2f,0.0f,0.0f });
 		}
-
-		// カメラ移動
-		if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
-		{
-			if (input->PushKey(DIK_W)) { ParticleManager::CameraMoveEyeVector({ 0.0f,+0.2f,0.0f }); }
-			else if (input->PushKey(DIK_S)) { ParticleManager::CameraMoveEyeVector({ 0.0f,-0.2f,0.0f }); }
-			if (input->PushKey(DIK_D)) { ParticleManager::CameraMoveEyeVector({ +0.2f,0.0f,0.0f }); }
-			else if (input->PushKey(DIK_A)) { ParticleManager::CameraMoveEyeVector({ -0.2f,0.0f,0.0f }); }
-		}
-
-		particle->Update();
-		for (size_t i = 0; i < maxObj; i++)
-		{
-			object3d[i]->Update();
-		}
-
-		//スプライト移動
-		if (input->PushKey(DIK_SPACE))
-		{
-			//現在の座標取得
-			XMFLOAT2 position = sprite1->GetPosition();
-			//移動後の座標を計算
-			position.x += 1.0f;
-			//座標の変更を反映
-			sprite1->SetPosition(position);
+		else if (input->PushKey(DIK_A)) {
+			//ParticleManager::CameraMoveEyeVector({ -0.2f,0.0f,0.0f });
+			Object3d::CameraMoveEyeVector({ -0.2f,0.0f,0.0f });
 		}
 	}
+
+	particle->Update();
+	for (size_t i = 0; i < maxObj; i++)
+	{
+		object3d[i]->Update();
+	}
+
+	////スプライト移動
+	//if (input->PushKey(DIK_SPACE))
+	//{
+	//	//現在の座標取得
+	//	XMFLOAT2 position = sprite1->GetPosition();
+	//	//移動後の座標を計算
+	//	position.x += 1.0f;
+	//	//座標の変更を反映
+	//	sprite1->SetPosition(position);
+	//}
 }
 
 void GameScene::Draw()
@@ -195,22 +190,20 @@ void GameScene::Draw()
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	// 3Dオブジェクト描画前処理
-	ParticleManager::PreDraw(cmdList);
-
-	// 3Dオブクジェクトの描画
-	particle->Draw();
+	Object3d::PreDraw(cmdList);
 	for (size_t i = 0; i < maxObj; i++)
 	{
 		object3d[i]->Draw();
 	}
+	// 3Dオブジェクト描画前処理
+	ParticleManager::PreDraw(cmdList);
+	// 3Dオブクジェクトの描画
+	particle->Draw();
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
 
 	// 3Dオブジェクト描画後処理
 	ParticleManager::PostDraw();
+	Object3d::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画

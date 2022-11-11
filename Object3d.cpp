@@ -51,13 +51,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, int window_width, int wind
 
 	// パイプライン初期化
 	InitializeGraphicsPipeline();
-
-	// テクスチャ読み込み
-	LoadTexture();
-
-	// モデル生成
-	CreateModel();
-
 }
 
 void Object3d::PreDraw(ID3D12GraphicsCommandList* cmdList)
@@ -82,8 +75,14 @@ void Object3d::PostDraw()
 	Object3d::cmdList = nullptr;
 }
 
-Object3d* Object3d::Create()
+Object3d* Object3d::Create(const wchar_t* filename)
 {
+	// テクスチャ読み込み
+	LoadTexture(filename);
+
+	// モデル生成
+	CreateModel();
+
 	// 3Dオブジェクトのインスタンスを生成
 	Object3d* object3d = new Object3d();
 	if (object3d == nullptr) {
@@ -188,7 +187,7 @@ void Object3d::InitializeGraphicsPipeline()
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/Shaders/BasicVertexShader.hlsl",	// シェーダファイル名
+		L"Resources/Shaders/BasicVS.hlsl",	// シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0",	// エントリーポイント名、シェーダーモデル指定
@@ -211,7 +210,7 @@ void Object3d::InitializeGraphicsPipeline()
 
 	// ピクセルシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/Shaders/BasicPixelShader.hlsl",	// シェーダファイル名
+		L"Resources/Shaders/BasicPS.hlsl",	// シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0",	// エントリーポイント名、シェーダーモデル指定
@@ -326,7 +325,7 @@ void Object3d::InitializeGraphicsPipeline()
 
 }
 
-void Object3d::LoadTexture()
+void Object3d::LoadTexture(const wchar_t* filename)
 {
 	HRESULT result = S_FALSE;
 
@@ -334,7 +333,7 @@ void Object3d::LoadTexture()
 	ScratchImage scratchImg{};
 
 	// WICテクスチャのロード
-	result = LoadFromWICFile(L"Resources/kusa.png", WIC_FLAGS_NONE, &metadata, scratchImg);
+	result = LoadFromWICFile(filename, WIC_FLAGS_NONE, &metadata, scratchImg);
 	assert(SUCCEEDED(result));
 
 	ScratchImage mipChain{};
@@ -591,7 +590,7 @@ void Object3d::Update()
 
 	if (isYBillboard)
 	{
-		matWorld *= matBillboardY;	//Y軸ビルボード行列をかける
+		matWorld = matWorld;
 	}
 	else
 	{

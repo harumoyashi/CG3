@@ -71,12 +71,21 @@
     <FxCompile Include="Resources\shaders\ParticleGS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\BasicPS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\BasicVS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Particle.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="Resources\shaders\Sprite.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="Resources\shaders\BasicShader.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
