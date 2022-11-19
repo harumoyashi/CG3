@@ -46,6 +46,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	// 3Dオブジェクト生成
 	particle = ParticleManager::Create();
 	particle->SetBillboard(false);
+	particle->SetIsDark(isDark);
 
 	// 3Dオブジェクト生成
 	for (size_t i = 0; i < maxObj; i++)
@@ -98,39 +99,41 @@ void GameScene::Update()
 	float r = (float)rand() / RAND_MAX * 1.0f;
 	float g = (float)rand() / RAND_MAX * 1.0f;
 	float b = (float)rand() / RAND_MAX * 1.0f;
-	particle->Add(120, pos, vel, acc, 0.0f, 3.0f, { r,g,b,1.0f });
-	particle->SetIsDark(true);
+	particle->Add(120, pos, vel, acc, minScale, maxScale, { r,g,b,1.0f });
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		if (isDark)
+		{
+			isDark = false;
+		}
+		else
+		{
+			isDark = true;
+		}
+	}
+	particle->SetIsDark(isDark);
 
-	// オブジェクト移動
-	//if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
-	//{
-	//	// 現在の座標を取得
-	//	XMFLOAT3 position = particle->GetPosition();
+	// 移動後の座標を計算
+	if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
+	else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
+	if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
+	else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
 
-		// 移動後の座標を計算
-		if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
-		else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
-		if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
-		else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
+	//スケール変更
+	if (input->TriggerKey(DIK_U)) { minScale -= 0.5f; }
+	else if (input->TriggerKey(DIK_I)) { minScale += 0.5f; }
+	if (input->TriggerKey(DIK_J)) { maxScale -= 0.5f; }
+	else if (input->TriggerKey(DIK_K)) { maxScale += 0.5f; }
 
-	//	// 座標の変更を反映
-	//	particle->SetPosition(position);
+	if (minScale < 0.0f)
+	{
+		minScale = 0.0f;
+	}
 
-	//	//for (size_t i = 0; i < maxObj; i++)
-	//	//{
-	//	//	// 現在の座標を取得
-	//	//	XMFLOAT3 position = ParticleManager[i]->GetPosition();
-
-	//	//	// 移動後の座標を計算
-	//	//	if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
-	//	//	else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
-	//	//	if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
-	//	//	else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
-
-	//	//	// 座標の変更を反映
-	//	//	ParticleManager[i]->SetPosition(position);
-	//	//}
-	//}
+	if (maxScale < 0.0f)
+	{
+		maxScale = 0.0f;
+	}
 
 	// カメラ移動
 	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))

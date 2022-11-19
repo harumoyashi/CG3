@@ -586,21 +586,26 @@ void ParticleManager::Update()
 		//こちらのタイプミスだったかもしれません
 		//進行度を0~1の範囲に換算
 		float f = (float)it->num_frame / it->frame;
-		//スケールの線形補間
-		it->scale = (it->endScale - it->startScale) / f;
-		it->scale += it->startScale;
 
 		//進行度を0~1の範囲に換算
 		float f1 = (float)it->frame / it->num_frame;
 
 		if (isDark)
 		{
+			//スケールの線形補間
+			it->scale = (it->endScale - it->startScale) / f;
+			it->scale += it->startScale;
+
 			it->color.x = f1 * it->originColor.x;
 			it->color.y = f1 * it->originColor.y;
 			it->color.z = f1 * it->originColor.z;
 		}
 		else
 		{
+			//スケールの線形補間
+			it->scale = (it->startScale - it->endScale) / f;
+			it->scale += it->endScale;
+
 			it->color.x *= (1.0f - f1);
 			it->color.y *= (1.0f - f1);
 			it->color.z *= (1.0f - f1);

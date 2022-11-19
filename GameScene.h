@@ -64,6 +64,9 @@ private: // メンバ変数
 
 	ParticleManager* particle = {};
 	XMFLOAT3 position = { 0,0,0 };
+	float minScale = 0.0f;
+	float maxScale = 3.0f;
+	bool isDark = false;
 
 	static const int maxObj = 2;
 	Object3d* object3d[maxObj] = {};
