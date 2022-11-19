@@ -77,11 +77,11 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 void GameScene::Update()
 {
 	//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
-	const float md_pos = 30.0f;
+	const float md_pos = 10.0f;
 	XMFLOAT3 pos{};
-	pos.x = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-	pos.y = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
-	pos.z = (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
+	pos.x = position.x + (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
+	pos.y = position.y + (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
+	pos.z = position.z + (float)rand() / RAND_MAX * md_pos - md_pos / 2.0f;
 
 	//X,Y,Z全て[-5.0f,+5.0f]でランダムに分布
 	const float md_vel = 10.0f;
@@ -95,7 +95,10 @@ void GameScene::Update()
 	const float rnd_acc = 0.001f;
 	acc.y = -(float)rand() / RAND_MAX * rnd_acc;
 	//追加
-	particle->Add(120, pos, vel, acc, 0.0f, 3.0f, { 0,0.8f,0.9f,1.0f });
+	float r = (float)rand() / RAND_MAX * 1.0f;
+	float g = (float)rand() / RAND_MAX * 1.0f;
+	float b = (float)rand() / RAND_MAX * 1.0f;
+	particle->Add(120, pos, vel, acc, 0.0f, 3.0f, { r,g,b,1.0f });
 	particle->SetIsDark(true);
 
 	// オブジェクト移動
@@ -104,11 +107,11 @@ void GameScene::Update()
 	//	// 現在の座標を取得
 	//	XMFLOAT3 position = particle->GetPosition();
 
-	//	// 移動後の座標を計算
-	//	if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
-	//	else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
-	//	if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
-	//	else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
+		// 移動後の座標を計算
+		if (input->PushKey(DIK_UP)) { position.y += 1.0f; }
+		else if (input->PushKey(DIK_DOWN)) { position.y -= 1.0f; }
+		if (input->PushKey(DIK_RIGHT)) { position.x += 1.0f; }
+		else if (input->PushKey(DIK_LEFT)) { position.x -= 1.0f; }
 
 	//	// 座標の変更を反映
 	//	particle->SetPosition(position);

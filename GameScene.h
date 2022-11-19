@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include "Input.h"
 #include "Sprite.h"
-#include "ParticleManager.h"
+#include "Emitter.h"
 #include "Object3d.h"
 #include "DebugText.h"
 
@@ -63,6 +63,7 @@ private: // メンバ変数
 	Sprite* spriteBG = nullptr;
 
 	ParticleManager* particle = {};
+	XMFLOAT3 position = { 0,0,0 };
 
 	static const int maxObj = 2;
 	Object3d* object3d[maxObj] = {};
